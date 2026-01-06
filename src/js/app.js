@@ -5,9 +5,11 @@
 
 
 // CONFIGURATION
+//As it is pure html css and js ..i am encoded my api key
+const encodedKey = 'MDBiNDQxYzdlNDVlYTMwYWQ4NzU4ZDU0MDlmZDBlZWEK';
 
 const CONFIG = {
-    API_KEY: '00b441c7e45ea30ad8758d5409fd0eea',
+    API_KEY: atob(encodedKey), //decoding
     BASE_URL: "https://api.openweathermap.org/data/2.5",
     GEO_URL: "https://api.openweathermap.org/geo/1.0/direct"
 };
