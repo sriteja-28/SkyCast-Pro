@@ -36,8 +36,6 @@ weather-app/
 🚀 Setup & Installation
 Clone the repository:
 
-Bash
-
 git clone [https://github.com/your-username/weather-app.git](https://github.com/your-username/weather-app.git)
 cd weather-app
 Configure API Key:
