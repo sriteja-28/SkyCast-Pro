@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SkyCast Pro | Premium Weather</title>
+  <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/cloud.png">
+
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .suggestion-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #suggestions::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #suggestions::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    .blob {
+      position: absolute;
+      width: 250px;
+      /* Reduced from 300px */
+      height: 250px;
+      background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+      filter: blur(80px);
+      border-radius: 50%;
+      z-index: -1;
+      animation: float 20s infinite alternate;
+    }
+
+    @keyframes float {
+      from {
+        transform: translate(-10%, -10%);
+      }
+
+      to {
+        transform: translate(20%, 20%);
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-[#0a0f1e] p-4 overflow-x-hidden">
+
+  <div class="blob top-0 left-0"></div>
+  <div class="blob bottom-0 right-0"
+    style="animation-delay: -10s; background: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);"></div>
+
+  <main class="glass rounded-[2rem] p-6 md:py-8 md:px-10 w-full max-w-md md:max-w-4xl text-white transition-all">
+
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">SkyCast</h1>
+        <p class="text-blue-400 text-[10px] uppercase tracking-widest font-bold">Atmospheric Intelligence</p>
+      </div>
+
+      <div class="relative w-full md:w-72">
+        <div class="relative flex items-center gap-2">
+          <input id="cityInput" type="text" placeholder="Search city..." autocomplete="off"
+            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/20 transition-all" />
+          <button id="searchBtn"
+            class="bg-blue-500 hover:bg-blue-400 text-white p-2.5 rounded-lg transition-all active:scale-95 shadow-lg shadow-blue-500/20">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
+        <div id="suggestions"
+          class="hidden absolute z-50 w-full mt-2 bg-[#161b2c] border border-white/10 rounded-xl overflow-y-auto max-h-48 shadow-2xl">
+        </div>
+      </div>
+    </div>
+
+    <div id="loader" class="hidden flex flex-col items-center justify-center py-10">
+      <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-500/20 border-t-blue-500"></div>
+    </div>
+
+    <section id="weather" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+      <div class="text-center md:text-left space-y-2">
+        <div>
+          <h2 id="cityName" class="text-4xl md:text-6xl font-extrabold tracking-tighter"></h2>
+          <p id="dateTime" class="text-blue-300/60 text-xs font-medium"></p>
+        </div>
+
+        <div class="flex items-center justify-center md:justify-start gap-3">
+          <div id="tempDisplay"
+            class="text-6xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">
+          </div>
+          <div class="flex flex-col items-start leading-tight">
+            <span class="text-xl font-bold italic">°C</span>
+            <span id="weatherDesc" class="text-blue-300 text-sm capitalize font-medium tracking-wide"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="relative flex justify-center items-center">
+          <div class="absolute inset-0 bg-blue-500 blur-[80px] opacity-30 rounded-full z-0"></div>
+
+          <img id="weatherIcon" src="" alt="Weather Icon"
+            class="relative w-32 h-32 md:w-44 md:h-44 z-10 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white/5 p-4 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-all">
+            <p class="text-[9px] text-blue-400 uppercase font-bold tracking-[0.2em] mb-1">Wind Velocity</p>
+            <p id="windVal" class="text-lg font-bold"></p>
+          </div>
+          <div class="bg-white/5 p-4 rounded-[1.5rem] border border-white/10 hover:bg-white/10 transition-all">
+            <p class="text-[9px] text-blue-400 uppercase font-bold tracking-[0.2em] mb-1">Air Humidity</p>
+            <p id="humidityVal" class="text-lg font-bold"></p>
+          </div>
+        </div>
+      </div>
+
+
+    </section>
+
+    <footer class="mt-8 pt-6 border-t border-white/5 text-center">
+      <p class="text-[11px] md:text-xs text-blue-300/50 font-medium tracking-wide leading-relaxed">
+        &copy; <span id="year"></span> Designed & Developed by
+        <a href="https://www.linkedin.com/in/YOUR_LINKEDIN_USERNAME" target="_blank"
+          class="text-blue-400 hover:text-blue-300 transition-colors duration-300 font-bold">
+          Sri Teja Muthangi
+        </a>.
+        All rights reserved.
+      </p>
+    </footer>
+  </main>
+
+  <script src="./js/app.js"></script>
+</body>
+
+</html>
+</main>
+
+<script src="./js/app.js"></script>
+</body>
+
+</html>
