@@ -7,7 +7,7 @@
 // CONFIGURATION
 
 const CONFIG = {
-    API_KEY: import.meta.env.VITE_WEATHER_KEY,
+    API_KEY: '00b441c7e45ea30ad8758d5409fd0eea',
     BASE_URL: "https://api.openweathermap.org/data/2.5",
     GEO_URL: "https://api.openweathermap.org/geo/1.0/direct"
 };
